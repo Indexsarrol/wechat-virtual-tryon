@@ -14,6 +14,7 @@ type MiniappChooseImageSuccess = {
 
 type MiniappBridge = {
   navigateTo?: (options: { url: string }) => void;
+  reLaunch?: (options: { url: string }) => void;
   chooseImage?: (options: {
     count?: number;
     sizeType?: string[];
@@ -35,6 +36,15 @@ function getBridge(): MiniappBridge | null {
   };
 
   return miniappGlobal.uni ?? miniappGlobal.wx ?? null;
+}
+
+function normalizeMiniappPath(path: string) {
+  if (!path) {
+    return "miniapp-image.jpg";
+  }
+
+  const normalized = path.split("?")[0];
+  return normalized.split("/").pop() ?? "miniapp-image.jpg";
 }
 
 function readFileAsDataUrl(file: File): Promise<PickedMiniappImage> {
@@ -95,7 +105,7 @@ function pickImageFromMiniapp(bridge: MiniappBridge): Promise<PickedMiniappImage
         const path = result.tempFilePaths?.[0] ?? result.tempFiles?.[0]?.path;
         const fileName =
           result.tempFiles?.[0]?.name ??
-          (path ? path.split("/").pop() ?? "miniapp-image.jpg" : "miniapp-image.jpg");
+          normalizeMiniappPath(path ?? "");
 
         if (!path) {
           reject(new Error("未获取到图片路径"));
@@ -120,6 +130,19 @@ export function navigateTo(url: string) {
 
   if (bridge?.navigateTo) {
     bridge.navigateTo({ url });
+    return;
+  }
+
+  if (typeof window !== "undefined") {
+    window.location.hash = url;
+  }
+}
+
+export function reLaunch(url: string) {
+  const bridge = getBridge();
+
+  if (bridge?.reLaunch) {
+    bridge.reLaunch({ url });
     return;
   }
 
@@ -170,4 +193,8 @@ export async function saveImage(imageUrl: string) {
   }
 
   throw new Error("当前环境不支持保存图片");
+}
+
+export function isMiniappRuntime() {
+  return Boolean(getBridge());
 }

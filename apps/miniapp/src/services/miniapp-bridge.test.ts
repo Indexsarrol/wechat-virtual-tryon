@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { navigateTo, pickSourceImage, saveImage } from "./miniapp-bridge";
+import { isMiniappRuntime, navigateTo, pickSourceImage, reLaunch, saveImage } from "./miniapp-bridge";
 
 afterEach(() => {
   delete (globalThis as { uni?: unknown }).uni;
@@ -18,6 +18,19 @@ describe("miniapp bridge", () => {
 
     expect(navigateToSpy).toHaveBeenCalledWith({
       url: "/pages/result/index"
+    });
+  });
+
+  it("uses miniapp reLaunch when available", () => {
+    const reLaunchSpy = vi.fn();
+    (globalThis as { uni?: { reLaunch: typeof reLaunchSpy } }).uni = {
+      reLaunch: reLaunchSpy
+    };
+
+    reLaunch("/pages/index/index");
+
+    expect(reLaunchSpy).toHaveBeenCalledWith({
+      url: "/pages/index/index"
     });
   });
 
@@ -54,6 +67,14 @@ describe("miniapp bridge", () => {
     });
   });
 
+  it("detects miniapp runtime when a bridge is present", () => {
+    (globalThis as { wx?: { navigateTo: () => void } }).wx = {
+      navigateTo() {}
+    };
+
+    expect(isMiniappRuntime()).toBe(true);
+  });
+
   it("uses saveImageToPhotosAlbum from the miniapp bridge when available", async () => {
     const saveSpy = vi.fn((options: { filePath: string; success?: () => void }) => {
       options.success?.();
@@ -70,5 +91,14 @@ describe("miniapp bridge", () => {
       fail: expect.any(Function),
       success: expect.any(Function)
     });
+  });
+
+  it("falls back to hash navigation in browser mode", () => {
+    const originalHash = window.location.hash;
+
+    navigateTo("/pages/lipstick/index");
+
+    expect(window.location.hash).toBe("#/pages/lipstick/index");
+    window.location.hash = originalHash;
   });
 });
