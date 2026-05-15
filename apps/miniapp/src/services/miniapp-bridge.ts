@@ -2,6 +2,10 @@ export type PickedMiniappImage = {
   dataUrl: string;
   fileName: string;
   source: "browser" | "miniapp";
+  mimeType: string;
+  byteSize: number;
+  localPath?: string;
+  transportKind: "browser-data-url" | "miniapp-temp-path";
 };
 
 type MiniappChooseImageSuccess = {
@@ -9,6 +13,8 @@ type MiniappChooseImageSuccess = {
   tempFiles?: Array<{
     path?: string;
     name?: string;
+    size?: number;
+    type?: string;
   }>;
 };
 
@@ -55,7 +61,10 @@ function readFileAsDataUrl(file: File): Promise<PickedMiniappImage> {
         resolve({
           dataUrl: reader.result,
           fileName: file.name,
-          source: "browser"
+          source: "browser",
+          mimeType: file.type || "image/unknown",
+          byteSize: file.size,
+          transportKind: "browser-data-url"
         });
         return;
       }
@@ -115,7 +124,11 @@ function pickImageFromMiniapp(bridge: MiniappBridge): Promise<PickedMiniappImage
         resolve({
           dataUrl: path,
           fileName,
-          source: "miniapp"
+          source: "miniapp",
+          mimeType: result.tempFiles?.[0]?.type ?? "image/unknown",
+          byteSize: result.tempFiles?.[0]?.size ?? 0,
+          localPath: path,
+          transportKind: "miniapp-temp-path"
         });
       },
       fail(error) {

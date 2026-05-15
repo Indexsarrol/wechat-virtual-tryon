@@ -129,9 +129,10 @@ export async function createDemoTryonTask(taskType: DemoTaskType): Promise<DemoT
           imageUrl: sourceImage.dataUrl,
           fileName: sourceImage.fileName,
           sourceKind: sourceImage.source,
-          contentType: sourceImage.dataUrl.startsWith("data:image/")
-            ? "image/data-url"
-            : "image/path"
+          contentType: sourceImage.mimeType,
+          byteSize: sourceImage.byteSize,
+          transportKind: sourceImage.transportKind,
+          localPath: sourceImage.localPath
         })
       });
 

@@ -7,6 +7,9 @@ type UploadPayload = {
   fileName?: string;
   sourceKind?: "browser" | "miniapp";
   contentType?: string;
+  byteSize?: number;
+  transportKind?: "browser-data-url" | "miniapp-temp-path" | "remote-url";
+  localPath?: string;
 };
 
 function isUploadPayload(body: unknown): body is UploadPayload {
@@ -35,6 +38,9 @@ export async function registerUploadRoutes(app: FastifyInstance) {
       fileName: payload.fileName ?? "user-image",
       sourceKind: payload.sourceKind ?? "browser",
       contentType: payload.contentType ?? "image/unknown",
+      byteSize: payload.byteSize ?? 0,
+      transportKind: payload.transportKind ?? "remote-url",
+      localPath: payload.localPath ?? null,
       uploadSessionId: randomUUID(),
       storageMode: "external-url-proxy",
       expiresAt

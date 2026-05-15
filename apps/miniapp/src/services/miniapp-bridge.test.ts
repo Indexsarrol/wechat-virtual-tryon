@@ -63,7 +63,11 @@ describe("miniapp bridge", () => {
     expect(result).toEqual({
       dataUrl: "wxfile://tmp/demo-image.jpg",
       fileName: "demo-image.jpg",
-      source: "miniapp"
+      source: "miniapp",
+      mimeType: "image/unknown",
+      byteSize: 0,
+      localPath: "wxfile://tmp/demo-image.jpg",
+      transportKind: "miniapp-temp-path"
     });
   });
 

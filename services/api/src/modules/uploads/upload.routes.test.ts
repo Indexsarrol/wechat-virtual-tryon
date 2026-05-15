@@ -12,7 +12,9 @@ describe("upload routes", () => {
         imageUrl: "https://cdn.local/source.jpg",
         fileName: "source.jpg",
         sourceKind: "browser",
-        contentType: "image/jpeg"
+        contentType: "image/jpeg",
+        byteSize: 2048,
+        transportKind: "browser-data-url"
       }
     });
 
@@ -23,7 +25,10 @@ describe("upload routes", () => {
       imageUrl: "https://cdn.local/source.jpg",
       fileName: "source.jpg",
       sourceKind: "browser",
-      contentType: "image/jpeg"
+      contentType: "image/jpeg",
+      byteSize: 2048,
+      transportKind: "browser-data-url",
+      localPath: null
     });
   });
 
