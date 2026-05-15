@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>虚拟试搭演示</title>
+    <style>
+      :root {
+        --bg: #f5efe5;
+        --panel: rgba(255, 255, 255, 0.78);
+        --panel-border: rgba(20, 28, 45, 0.08);
+        --ink: #1f2430;
+        --muted: #6e7687;
+        --accent-a: #0f7a66;
+        --accent-b: #bf2f6f;
+        --accent-c: #1f5eff;
+        --shadow: 0 18px 40px rgba(31, 36, 48, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(15, 122, 102, 0.18), transparent 28%),
+          radial-gradient(circle at top right, rgba(191, 47, 111, 0.16), transparent 24%),
+          linear-gradient(135deg, #f9f4eb 0%, #f3efe9 48%, #ece6dc 100%);
+      }
+
+      .shell {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 28px 20px 40px;
+      }
+
+      .hero {
+        display: grid;
+        gap: 18px;
+        margin-bottom: 24px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid rgba(31, 36, 48, 0.08);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(34px, 5vw, 64px);
+        line-height: 0.98;
+        letter-spacing: -0.05em;
+      }
+
+      .hero p {
+        margin: 0;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.6;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(320px, 430px) minmax(360px, 1fr);
+        gap: 20px;
+      }
+
+      .panel {
+        background: var(--panel);
+        backdrop-filter: blur(18px);
+        border: 1px solid var(--panel-border);
+        border-radius: 28px;
+        box-shadow: var(--shadow);
+      }
+
+      .control-panel {
+        padding: 24px;
+      }
+
+      .result-panel {
+        padding: 18px;
+      }
+
+      .section-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .status-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 92px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        background: rgba(31, 94, 255, 0.1);
+        color: var(--accent-c);
+      }
+
+      .mode-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+
+      .mode-button {
+        appearance: none;
+        border: 1px solid rgba(31, 36, 48, 0.1);
+        border-radius: 18px;
+        padding: 18px 16px;
+        background: rgba(255, 255, 255, 0.68);
+        text-align: left;
+        cursor: pointer;
+        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .mode-button strong {
+        display: block;
+        font-size: 17px;
+        margin-bottom: 6px;
+      }
+
+      .mode-button span {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .mode-button.active {
+        border-color: rgba(31, 94, 255, 0.35);
+        box-shadow: inset 0 0 0 1px rgba(31, 94, 255, 0.24);
+        transform: translateY(-1px);
+      }
+
+      .asset-card {
+        border-radius: 22px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(31, 36, 48, 0.08);
+        margin-bottom: 18px;
+      }
+
+      .asset-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        background: #e5e7eb;
+      }
+
+      .asset-copy {
+        padding: 14px 16px 16px;
+      }
+
+      .asset-copy strong {
+        display: block;
+        font-size: 18px;
+        margin-bottom: 5px;
+      }
+
+      .asset-copy span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .privacy-note {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(31, 36, 48, 0.04);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 18px;
+      }
+
+      .action-bar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .primary-button,
+      .ghost-button {
+        appearance: none;
+        border: none;
+        border-radius: 999px;
+        padding: 14px 20px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .primary-button {
+        color: white;
+        background: linear-gradient(135deg, var(--accent-a), #1f9d84);
+        box-shadow: 0 10px 24px rgba(15, 122, 102, 0.24);
+      }
+
+      .ghost-button {
+        color: var(--ink);
+        background: rgba(31, 36, 48, 0.06);
+      }
+
+      .primary-button[data-mode="lipstick"] {
+        background: linear-gradient(135deg, var(--accent-b), #da4f90);
+        box-shadow: 0 10px 24px rgba(191, 47, 111, 0.24);
+      }
+
+      .result-head {
+        padding: 14px 14px 18px;
+      }
+
+      .result-head h2 {
+        margin: 0 0 8px;
+        font-size: 24px;
+      }
+
+      .result-head p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .preview-card {
+        border-radius: 24px;
+        overflow: hidden;
+        background: rgba(31, 36, 48, 0.04);
+        border: 1px solid rgba(31, 36, 48, 0.06);
+      }
+
+      .preview-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
+      }
+
+      .preview-card footer {
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .preview-card strong {
+        font-size: 16px;
+      }
+
+      .preview-card span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .timeline {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding: 18px 14px 8px;
+      }
+
+      .timeline-step {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(31, 36, 48, 0.05);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .timeline-step.active {
+        color: white;
+        background: linear-gradient(135deg, #1f5eff, #5b6cff);
+      }
+
+      @media (max-width: 920px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .preview-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="eyebrow">DEMO PREVIEW · 假数据可演示版</div>
+        <h1>在线试衣 + 口红试色</h1>
+        <p>
+          这是一个可直接预览的演示页：点击按钮后会模拟创建任务、轮询状态，并生成一组原图/效果图。
+          当前展示的是离线假数据闭环，不依赖真实 AI 接口。
+        </p>
+      </section>
+
+      <section class="layout">
+        <section class="panel control-panel">
+          <div class="section-title">
+            <h2>选择演示模式</h2>
+            <span class="status-chip" id="status-chip">待开始</span>
+          </div>
+
+          <div class="mode-grid">
+            <button class="mode-button active" data-mode="fitting" id="mode-fitting">
+              <strong>在线试衣</strong>
+              <span>上传本人照片 / 选择模板模特 / 生成模拟试衣效果图</span>
+            </button>
+            <button class="mode-button" data-mode="lipstick" id="mode-lipstick">
+              <strong>口红试色</strong>
+              <span>上传自拍 / 选择模板模特 / 生成模拟口红试色图</span>
+            </button>
+          </div>
+
+          <article class="asset-card">
+            <img id="asset-preview" alt="素材预览" />
+            <div class="asset-copy">
+              <strong id="asset-name"></strong>
+              <span id="asset-caption"></span>
+            </div>
+          </article>
+
+          <div class="privacy-note" id="privacy-note"></div>
+
+          <div class="action-bar">
+            <button class="primary-button" id="primary-action" data-mode="fitting">开始试衣</button>
+            <button class="ghost-button" id="reset-button">重置演示</button>
+          </div>
+        </section>
+
+        <section class="panel result-panel">
+          <div class="result-head">
+            <h2 id="result-title">等待生成演示结果</h2>
+            <p id="result-description">点击左侧按钮后，这里会显示原图与效果图的模拟结果。</p>
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-step" id="step-created">1. 创建任务</div>
+            <div class="timeline-step" id="step-polling">2. 轮询中</div>
+            <div class="timeline-step" id="step-success">3. 结果完成</div>
+          </div>
+
+          <div class="preview-grid">
+            <article class="preview-card">
+              <img id="original-image" alt="原图预览" />
+              <footer>
+                <strong>原图</strong>
+                <span id="original-label">待生成</span>
+              </footer>
+            </article>
+            <article class="preview-card">
+              <img id="result-image" alt="效果图预览" />
+              <footer>
+                <strong>效果图</strong>
+                <span id="result-label">待生成</span>
+              </footer>
+            </article>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const demoTasks = new Map();
+
+      function buildSvgDataUrl(title, subtitle, background, accent) {
+        const svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="480" height="640" viewBox="0 0 480 640">
+            <rect width="480" height="640" rx="32" fill="${background}" />
+            <rect x="48" y="80" width="384" height="480" rx="28" fill="white" fill-opacity="0.12" />
+            <circle cx="240" cy="208" r="72" fill="${accent}" fill-opacity="0.85" />
+            <rect x="132" y="300" width="216" height="184" rx="28" fill="${accent}" fill-opacity="0.65" />
+            <text x="240" y="540" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="white" text-anchor="middle">${title}</text>
+            <text x="240" y="578" font-family="Arial, sans-serif" font-size="18" fill="white" text-anchor="middle">${subtitle}</text>
+          </svg>
+        `;
+        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      }
+
+      function createDemoTask(mode) {
+        const taskId = `preview-${Math.random().toString(36).slice(2, 10)}`;
+        const payload =
+          mode === "fitting"
+            ? {
+                title: "在线试衣演示结果",
+                description: "系统已生成一张模拟试衣效果图。",
+                assetName: "经典西装",
+                assetCaption: "Classic Blazer 演示素材",
+                privacy: "上传图片仅用于生成试衣效果，系统会在到期后自动清理。",
+                originalImage: buildSvgDataUrl("原图", "未试衣", "#5B6CFF", "#9FD3FF"),
+                resultImage: buildSvgDataUrl("试衣效果", "经典西装", "#0E7A67", "#74D8B8")
+              }
+            : {
+                title: "口红试色演示结果",
+                description: "系统已生成一张模拟试色效果图。",
+                assetName: "Rose Bloom",
+                assetCaption: "Rose Bloom 色号演示素材",
+                privacy: "上传图片仅用于生成试色效果，系统会在到期后自动清理。",
+                originalImage: buildSvgDataUrl("原图", "未试色", "#7A5BFF", "#E0A8FF"),
+                resultImage: buildSvgDataUrl("试色效果", "Rose Bloom", "#B9316F", "#FF9AC0")
+              };
+
+        demoTasks.set(taskId, {
+          id: taskId,
+          mode,
+          polls: 0,
+          ...payload
+        });
+
+        return { taskId, status: "pending" };
+      }
+
+      function pollDemoTask(taskId) {
+        const task = demoTasks.get(taskId);
+        if (!task) {
+          return { status: "failed", message: "未找到演示任务" };
+        }
+
+        task.polls += 1;
+
+        if (task.polls === 1) {
+          return { status: "running" };
+        }
+
+        return {
+          status: "success",
+          ...task
+        };
+      }
+
+      const state = {
+        mode: "fitting",
+        taskId: "",
+        status: "idle"
+      };
+
+      const els = {
+        fittingButton: document.getElementById("mode-fitting"),
+        lipstickButton: document.getElementById("mode-lipstick"),
+        primaryButton: document.getElementById("primary-action"),
+        resetButton: document.getElementById("reset-button"),
+        statusChip: document.getElementById("status-chip"),
+        assetPreview: document.getElementById("asset-preview"),
+        assetName: document.getElementById("asset-name"),
+        assetCaption: document.getElementById("asset-caption"),
+        privacyNote: document.getElementById("privacy-note"),
+        resultTitle: document.getElementById("result-title"),
+        resultDescription: document.getElementById("result-description"),
+        originalImage: document.getElementById("original-image"),
+        resultImage: document.getElementById("result-image"),
+        originalLabel: document.getElementById("original-label"),
+        resultLabel: document.getElementById("result-label"),
+        stepCreated: document.getElementById("step-created"),
+        stepPolling: document.getElementById("step-polling"),
+        stepSuccess: document.getElementById("step-success")
+      };
+
+      function getModeMeta(mode) {
+        if (mode === "fitting") {
+          return {
+            buttonText: "开始试衣",
+            assetName: "经典西装",
+            assetCaption: "Classic Blazer 演示素材",
+            assetImage: buildSvgDataUrl("服装素材", "Classic Blazer", "#1E3A8A", "#93C5FD"),
+            privacy: "上传图片仅用于生成试衣效果，系统会在到期后自动清理。"
+          };
+        }
+
+        return {
+          buttonText: "开始试色",
+          assetName: "Rose Bloom",
+          assetCaption: "Rose Bloom 色号演示素材",
+          assetImage: buildSvgDataUrl("色号素材", "Rose Bloom", "#9D174D", "#FDA4AF"),
+          privacy: "上传图片仅用于生成试色效果，系统会在到期后自动清理。"
+        };
+      }
+
+      function setStatus(text, accent) {
+        els.statusChip.textContent = text;
+        els.statusChip.style.background = accent === "pink"
+          ? "rgba(191, 47, 111, 0.12)"
+          : accent === "green"
+            ? "rgba(15, 122, 102, 0.12)"
+            : "rgba(31, 94, 255, 0.10)";
+        els.statusChip.style.color = accent === "pink"
+          ? "#bf2f6f"
+          : accent === "green"
+            ? "#0f7a66"
+            : "#1f5eff";
+      }
+
+      function setTimeline(step) {
+        [els.stepCreated, els.stepPolling, els.stepSuccess].forEach((node) => {
+          node.classList.remove("active");
+        });
+
+        if (step >= 1) els.stepCreated.classList.add("active");
+        if (step >= 2) els.stepPolling.classList.add("active");
+        if (step >= 3) els.stepSuccess.classList.add("active");
+      }
+
+      function updateMode(mode) {
+        state.mode = mode;
+        const meta = getModeMeta(mode);
+        els.fittingButton.classList.toggle("active", mode === "fitting");
+        els.lipstickButton.classList.toggle("active", mode === "lipstick");
+        els.primaryButton.dataset.mode = mode;
+        els.primaryButton.textContent = meta.buttonText;
+        els.assetName.textContent = meta.assetName;
+        els.assetCaption.textContent = meta.assetCaption;
+        els.assetPreview.src = meta.assetImage;
+        els.privacyNote.textContent = meta.privacy;
+      }
+
+      function resetResultPanel() {
+        els.resultTitle.textContent = "等待生成演示结果";
+        els.resultDescription.textContent = "点击左侧按钮后，这里会显示原图与效果图的模拟结果。";
+        els.originalImage.src = buildSvgDataUrl("待生成", "原图预览", "#8B95A7", "#D4D8E1");
+        els.resultImage.src = buildSvgDataUrl("待生成", "效果图预览", "#8B95A7", "#D4D8E1");
+        els.originalLabel.textContent = "待生成";
+        els.resultLabel.textContent = "待生成";
+        setTimeline(0);
+        setStatus("待开始", "blue");
+      }
+
+      async function runDemo() {
+        const created = createDemoTask(state.mode);
+        state.taskId = created.taskId;
+        setStatus("任务已创建", "blue");
+        setTimeline(1);
+
+        await new Promise((resolve) => setTimeout(resolve, 450));
+        const firstPoll = pollDemoTask(state.taskId);
+        if (firstPoll.status === "running") {
+          setStatus("生成中", state.mode === "lipstick" ? "pink" : "green");
+          setTimeline(2);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 650));
+        const secondPoll = pollDemoTask(state.taskId);
+
+        if (secondPoll.status !== "success") {
+          setStatus("生成失败", "pink");
+          els.resultTitle.textContent = "演示任务失败";
+          els.resultDescription.textContent = secondPoll.message || "请重新尝试。";
+          return;
+        }
+
+        setStatus("结果已生成", state.mode === "lipstick" ? "pink" : "green");
+        setTimeline(3);
+        els.resultTitle.textContent = secondPoll.title;
+        els.resultDescription.textContent = secondPoll.description;
+        els.originalImage.src = secondPoll.originalImage;
+        els.resultImage.src = secondPoll.resultImage;
+        els.originalLabel.textContent = state.mode === "fitting" ? "上传原图" : "上传自拍";
+        els.resultLabel.textContent = state.mode === "fitting" ? "试衣效果" : "试色效果";
+      }
+
+      els.fittingButton.addEventListener("click", () => updateMode("fitting"));
+      els.lipstickButton.addEventListener("click", () => updateMode("lipstick"));
+      els.primaryButton.addEventListener("click", () => {
+        void runDemo();
+      });
+      els.resetButton.addEventListener("click", () => {
+        state.taskId = "";
+        resetResultPanel();
+      });
+
+      updateMode("fitting");
+      resetResultPanel();
+    </script>
+  </body>
+</html>

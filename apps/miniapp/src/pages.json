@@ -1,0 +1,28 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "AI 试搭体验"
+      }
+    },
+    {
+      "path": "pages/fitting/index",
+      "style": {
+        "navigationBarTitleText": "在线试衣"
+      }
+    },
+    {
+      "path": "pages/lipstick/index",
+      "style": {
+        "navigationBarTitleText": "口红试色"
+      }
+    },
+    {
+      "path": "pages/result/index",
+      "style": {
+        "navigationBarTitleText": "试搭结果"
+      }
+    }
+  ]
+}

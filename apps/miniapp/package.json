@@ -1,0 +1,23 @@
+{
+  "name": "@virtual-tryon/miniapp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "test": "node --input-type=module -e \"import { startVitest } from 'vitest/node'; import vue from '@vitejs/plugin-vue'; const ctx = await startVitest('test', ['src/services/miniapp-bridge.test.ts', 'src/pages/index/index.test.ts', 'src/pages/fitting/index.test.ts', 'src/pages/lipstick/index.test.ts', 'src/pages/result/index.test.ts'], { environment: 'jsdom', plugins: [vue()] }); const code = await ctx?.close(); process.exit(code ?? 0);\"",
+    "vitest": "node --input-type=module -e \"import { startVitest } from 'vitest/node'; import vue from '@vitejs/plugin-vue'; const args = process.argv.slice(1); const filters = args.length > 0 ? args : undefined; const ctx = await startVitest('test', filters, { environment: 'jsdom', plugins: [vue()] }); const code = await ctx?.close(); process.exit(code ?? 0);\"",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "pinia": "^3.0.3",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^2.4.6",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "jsdom": "^26.1.0",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4",
+    "vue-tsc": "^2.2.10"
+  }
+}

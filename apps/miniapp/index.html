@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Miniapp Demo Preview</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        background: #f4efe7;
+        color: #1f2430;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top left, rgba(31, 94, 255, 0.14), transparent 24%),
+          radial-gradient(circle at bottom right, rgba(185, 49, 111, 0.14), transparent 28%),
+          linear-gradient(180deg, #f8f2e9 0%, #f0ebe3 100%);
+      }
+
+      #app {
+        min-height: 100vh;
+      }
+
+      .web-preview-shell {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 20px 48px;
+      }
+
+      .web-preview-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+
+      .web-preview-head h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 44px);
+        letter-spacing: -0.04em;
+      }
+
+      .web-preview-head p {
+        margin: 8px 0 0;
+        color: #6b7280;
+        max-width: 720px;
+        line-height: 1.6;
+      }
+
+      .miniapp-stage {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(31, 36, 48, 0.08);
+        border-radius: 30px;
+        box-shadow: 0 20px 44px rgba(31, 36, 48, 0.12);
+        overflow: hidden;
+      }
+
+      .miniapp-stage view,
+      .miniapp-stage navigator,
+      .miniapp-stage section,
+      .miniapp-stage footer {
+        display: block;
+      }
+
+      .miniapp-page {
+        padding: 26px;
+      }
+
+      .page-title,
+      .title,
+      .hero {
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        margin-bottom: 18px;
+      }
+
+      .page {
+        display: grid;
+        gap: 16px;
+      }
+
+      .mode-list,
+      .toggle-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .mode-card,
+      .toggle-chip {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: rgba(31, 36, 48, 0.04);
+        border: 1px solid rgba(31, 36, 48, 0.08);
+        font-weight: 600;
+      }
+
+      navigator,
+      button {
+        appearance: none;
+        cursor: pointer;
+      }
+
+      navigator {
+        padding: 16px 18px;
+        border-radius: 18px;
+        background: rgba(31, 94, 255, 0.1);
+        border: 1px solid rgba(31, 94, 255, 0.2);
+        color: #1f5eff;
+        font-weight: 700;
+      }
+
+      button {
+        border: none;
+        padding: 14px 20px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #0f7a66, #19a282);
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        box-shadow: 0 12px 28px rgba(15, 122, 102, 0.22);
+      }
+
+      .lipstick-page button {
+        background: linear-gradient(135deg, #b9316f, #df5f97);
+        box-shadow: 0 12px 28px rgba(185, 49, 111, 0.22);
+      }
+
+      .privacy-note,
+      .status-note,
+      .result-description,
+      .preview-empty {
+        color: #6b7280;
+        line-height: 1.65;
+      }
+
+      .result-summary {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      img.preview-image {
+        display: block;
+        width: 100%;
+        max-width: 320px;
+        border-radius: 22px;
+        background: #e5e7eb;
+        border: 1px solid rgba(31, 36, 48, 0.08);
+      }
+
+      @media (max-width: 700px) {
+        .mode-list,
+        .toggle-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

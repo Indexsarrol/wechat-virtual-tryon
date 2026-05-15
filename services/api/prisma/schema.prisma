@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model GarmentAsset {
+  id            String   @id @default(cuid())
+  name          String
+  category      String
+  coverUrl      String
+  tryonAssetUrl String
+  genderTag     String?
+  bodyTypeTag   String?
+  status        String   @default("draft")
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model LipstickAsset {
+  id         String   @id @default(cuid())
+  brand      String
+  series     String
+  shadeName  String
+  shadeCode  String?
+  colorHex   String
+  coverUrl   String
+  status     String   @default("draft")
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ModelAsset {
+  id             String   @id @default(cuid())
+  type           String
+  name           String
+  previewUrl     String
+  sourceImageUrl String
+  genderTag      String?
+  skinToneTag    String?
+  faceShapeTag   String?
+  styleTag       String?
+  status         String   @default("draft")
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model UploadedImage {
+  id               String   @id @default(cuid())
+  sessionId        String
+  purpose          String
+  imageUrl         String
+  validationStatus String   @default("pending")
+  expiresAt        DateTime
+  createdAt        DateTime @default(now())
+}
+
+model TryonTask {
+  id             String   @id @default(cuid())
+  taskType       String
+  mode           String
+  sessionId      String
+  sourceImageId  String?
+  modelAssetId   String?
+  assetId        String
+  providerKey    String
+  status         String   @default("pending")
+  failReason     String?
+  resultImageUrl String?
+  durationMs     Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
